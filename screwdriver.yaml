@@ -1,9 +1,13 @@
 jobs:
     main:
         requires: [~pr, ~commit]
-        image: node:8
+        image: node:18
         steps:
-            - echo: echo hi
-            - meta: |
-                meta set meta.status.coverage '{"status":"SUCCESS","message":"Coverage is above 80%."}'
-                meta set meta.status.pendingTest '{"status":"PENDING","message":"Still working on it."}'
+            - check: |
+                ### do a check on what files changed here
+                ### if no need to run subsequent tests then fail early
+                meta set meta.status.certifyPR '{"status":"SUCCESS","message":"Coverage is above 80%."}'
+                exit 1
+            - teardown-step: |
+                ### else run all steps and set success in teardown
+                meta set meta.status.certifyPR '{"status":"SUCCESS","message":"Coverage is above 80%."}'
